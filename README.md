@@ -22,7 +22,8 @@ with the same syntax :)
 # Using lockdiff with git
 
 The primary purpose of this tool is to hide "noise" related to package changes
-in automatically generated files when using with `git`
+in automatically generated files such as `Cargo.lock` when using with `git diff`
+and related commands.
 
 For this to work, you need to register the 'lockdiff' in .gitattributes:
 
