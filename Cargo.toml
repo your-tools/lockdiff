@@ -1,0 +1,9 @@
+[package]
+name = "lockdiff"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.58"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.5.9"
