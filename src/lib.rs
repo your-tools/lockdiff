@@ -48,11 +48,11 @@ struct CargoPackage {
     version: String,
 }
 
-impl Into<Package> for CargoPackage {
-    fn into(self) -> Package {
+impl From<CargoPackage> for Package {
+    fn from(val: CargoPackage) -> Self {
         Package {
-            name: self.name,
-            version: self.version,
+            name: val.name,
+            version: val.version,
         }
     }
 }
@@ -84,13 +84,21 @@ fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
     let packages = match name {
         "Cargo.lock" | "poetry.lock" => {
             let cargo_lock: CargoLock =
-                toml::from_str(&contents).context("Could not parse Cargo.lock")?;
+                toml::from_str(contents).context("Could not parse Cargo.lock")?;
             cargo_lock.packages()
         }
         "package-lock.json" => {
             let npm_lock: NpmLock =
-                serde_json::from_str(&contents).context("Could not parse package-lock.json")?;
+                serde_json::from_str(contents).context("Could not parse package-lock.json")?;
             npm_lock.packages()
+        }
+        "yarn.lock" => {
+            let entries =
+                yarn_lock_parser::parse_str(contents).context("Could not parse yarn.lock")?;
+            entries
+                .iter()
+                .map(|e| Package::new(e.name, e.version))
+                .collect()
         }
         _ => bail!("Unknown lock name: {name}"),
     };
@@ -116,7 +124,6 @@ pub fn run() -> Result<()> {
     for package in packages {
         println!("{package}");
     }
-
     Ok(())
 }
 
