@@ -1,16 +1,10 @@
-use std::fmt::Display;
 use std::path::PathBuf;
+use std::{collections::BTreeMap, fmt::Display};
 
 use anyhow::{anyhow, bail, Context, Result};
 use serde::Deserialize;
 
-#[derive(Deserialize, Debug)]
-struct Lock {
-    #[serde(rename = "package")]
-    packages: Vec<Package>,
-}
-
-#[derive(Deserialize, Debug, PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 struct Package {
     name: String,
     version: String,
@@ -18,7 +12,7 @@ struct Package {
 
 impl Package {
     #![allow(dead_code)]
-    pub fn new(name: &str, version: &str) -> Self {
+    fn new(name: &str, version: &str) -> Self {
         Self {
             name: name.to_string(),
             version: version.to_string(),
@@ -32,8 +26,75 @@ impl Display for Package {
     }
 }
 
-fn parse_lock(name: &str, contents: &str) -> Result<Lock> {
-    toml::from_str(&contents).context("Could not parse lock")
+trait Lock {
+    fn packages(self) -> Vec<Package>;
+}
+
+#[derive(Deserialize, Debug)]
+struct CargoLock {
+    #[serde(rename = "package")]
+    packages: Vec<CargoPackage>,
+}
+
+impl Lock for CargoLock {
+    fn packages(self) -> Vec<Package> {
+        self.packages.into_iter().map(|p| p.into()).collect()
+    }
+}
+
+#[derive(Deserialize, Debug)]
+struct CargoPackage {
+    name: String,
+    version: String,
+}
+
+impl Into<Package> for CargoPackage {
+    fn into(self) -> Package {
+        Package {
+            name: self.name,
+            version: self.version,
+        }
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq, Eq)]
+struct NpmLock {
+    packages: BTreeMap<String, NpmPackage>,
+}
+
+impl Lock for NpmLock {
+    fn packages(self) -> Vec<Package> {
+        self.packages
+            .into_iter()
+            .filter(|(k, _)| !k.is_empty())
+            .map(|(k, v)| Package {
+                name: k.replace("node_modules/", ""),
+                version: v.version,
+            })
+            .collect()
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq, Eq)]
+struct NpmPackage {
+    version: String,
+}
+
+fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
+    let packages = match name {
+        "Cargo.lock" | "poetry.lock" => {
+            let cargo_lock: CargoLock =
+                toml::from_str(&contents).context("Could not parse lock")?;
+            cargo_lock.packages()
+        }
+        "package-lock.json" => {
+            let npm_lock: NpmLock =
+                serde_json::from_str(&contents).context("Could not parse lock")?;
+            npm_lock.packages()
+        }
+        _ => bail!("Unknown lock name: {name}"),
+    };
+    Ok(packages)
 }
 
 pub fn run() -> Result<()> {
@@ -51,8 +112,8 @@ pub fn run() -> Result<()> {
         .to_str()
         .ok_or_else(|| anyhow!("File name should be valid UTF-8"))?;
     let lock_contents = std::fs::read_to_string(&lock_path).context("Could not read lock file")?;
-    let lock: Lock = parse_lock(name, &lock_contents)?;
-    for package in lock.packages {
+    let packages = parse_lock(name, &lock_contents)?;
+    for package in packages {
         println!("{package}");
     }
 
@@ -81,9 +142,9 @@ version = "1.0.0"
 dependencies = [
  "anyhow",
 ]"#;
-        let lock = parse_lock("Cargo.lock", contents).unwrap();
+        let packages = parse_lock("Cargo.lock", contents).unwrap();
         assert_eq!(
-            &lock.packages,
+            &packages,
             &[
                 Package::new("anyhow", "1.0.58"),
                 Package::new("lockdiff", "1.0.0")
@@ -102,7 +163,35 @@ python-versions = ">=3.6"
 [package.dependencies]
 python-dateutil = ">=2.7.0"
 "#;
-        let lock = parse_lock("poetry.lock", contents).unwrap();
-        assert_eq!(&lock.packages, &[Package::new("arrow", "1.2.2")]);
+        let packages = parse_lock("poetry.lock", contents).unwrap();
+        assert_eq!(&packages, &[Package::new("arrow", "1.2.2")]);
+    }
+
+    #[test]
+    fn test_npm_lock() {
+        let contents = r#"
+{
+  "name": "subsea-layout",
+  "version": "0.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "subsea-layout",
+      "version": "0.0.0",
+      "dependencies": {
+        "@eslint": "^2.1.2"
+      }
+    },
+    "node_modules/@eslint/eslintrc": {
+      "version": "2.1.2",
+       "resolved": "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-2.1.2.tgz"
+    }
+  }
+}
+"#;
+
+        let packages = parse_lock("package-lock.json", contents).unwrap();
+        assert_eq!(&packages, &[Package::new("@eslint/eslintrc", "2.1.2")]);
     }
 }
