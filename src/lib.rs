@@ -1,6 +1,7 @@
 use std::fmt::Display;
+use std::path::PathBuf;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
@@ -31,7 +32,7 @@ impl Display for Package {
     }
 }
 
-fn parse_lock(contents: &str) -> Result<Lock> {
+fn parse_lock(name: &str, contents: &str) -> Result<Lock> {
     toml::from_str(&contents).context("Could not parse lock")
 }
 
@@ -42,8 +43,15 @@ pub fn run() -> Result<()> {
     }
 
     let lock_path = &args[1];
+    let lock_path = PathBuf::from(lock_path);
+    let name = lock_path
+        .file_name()
+        .ok_or_else(|| anyhow!("Lock path should have a file name"))?;
+    let name = name
+        .to_str()
+        .ok_or_else(|| anyhow!("File name should be valid UTF-8"))?;
     let lock_contents = std::fs::read_to_string(&lock_path).context("Could not read lock file")?;
-    let lock: Lock = parse_lock(&lock_contents)?;
+    let lock: Lock = parse_lock(name, &lock_contents)?;
     for package in lock.packages {
         println!("{package}");
     }
@@ -73,7 +81,7 @@ version = "1.0.0"
 dependencies = [
  "anyhow",
 ]"#;
-        let lock = parse_lock(contents).unwrap();
+        let lock = parse_lock("Cargo.lock", contents).unwrap();
         assert_eq!(
             &lock.packages,
             &[
@@ -94,7 +102,7 @@ python-versions = ">=3.6"
 [package.dependencies]
 python-dateutil = ">=2.7.0"
 "#;
-        let lock = parse_lock(contents).unwrap();
+        let lock = parse_lock("poetry.lock", contents).unwrap();
         assert_eq!(&lock.packages, &[Package::new("arrow", "1.2.2")]);
     }
 }
