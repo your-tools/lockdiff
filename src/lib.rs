@@ -5,7 +5,8 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 struct Lock {
-    package: Vec<Package>,
+    #[serde(rename = "package")]
+    packages: Vec<Package>,
 }
 
 #[derive(Deserialize, Debug, PartialEq, Eq)]
@@ -43,7 +44,7 @@ pub fn run() -> Result<()> {
     let lock_path = &args[1];
     let lock_contents = std::fs::read_to_string(&lock_path).context("Could not read lock file")?;
     let lock: Lock = parse_lock(&lock_contents)?;
-    for package in lock.package {
+    for package in lock.packages {
         println!("{package}");
     }
 
@@ -74,7 +75,7 @@ dependencies = [
 ]"#;
         let lock = parse_lock(contents).unwrap();
         assert_eq!(
-            &lock.package,
+            &lock.packages,
             &[
                 Package::new("anyhow", "1.0.58"),
                 Package::new("lockdiff", "1.0.0")
@@ -94,6 +95,6 @@ python-versions = ">=3.6"
 python-dateutil = ">=2.7.0"
 "#;
         let lock = parse_lock(contents).unwrap();
-        assert_eq!(&lock.package, &[Package::new("arrow", "1.2.2")]);
+        assert_eq!(&lock.packages, &[Package::new("arrow", "1.2.2")]);
     }
 }
