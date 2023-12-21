@@ -16,9 +16,6 @@ becomes:
 foo@1.4
 ```
 
-Note that this works both with `poetry.lock` and `Cargo.lock` - both use `toml`
-with the same syntax :)
-
 # Using lockdiff with git
 
 The primary purpose of this tool is to hide "noise" related to package changes
@@ -37,3 +34,10 @@ And have the following section in your git config:
 [diff "lockdiff"]
 textconv = lockdiff
 ```
+
+# Supported locks
+
+* `Cargo.lock`
+* `poetry.lock` (fun fact, Poetry and Cargo have compatible formats 😎)
+* `package-lock.json`
+* `yarn.lock`
