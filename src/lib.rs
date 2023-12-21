@@ -84,12 +84,12 @@ fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
     let packages = match name {
         "Cargo.lock" | "poetry.lock" => {
             let cargo_lock: CargoLock =
-                toml::from_str(&contents).context("Could not parse lock")?;
+                toml::from_str(&contents).context("Could not parse Cargo.lock")?;
             cargo_lock.packages()
         }
         "package-lock.json" => {
             let npm_lock: NpmLock =
-                serde_json::from_str(&contents).context("Could not parse lock")?;
+                serde_json::from_str(&contents).context("Could not parse package-lock.json")?;
             npm_lock.packages()
         }
         _ => bail!("Unknown lock name: {name}"),
