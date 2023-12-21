@@ -84,7 +84,7 @@ fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
     let packages = match name {
         "Cargo.lock" | "poetry.lock" => {
             let cargo_lock: CargoLock =
-                toml::from_str(contents).context("Could not parse Cargo.lock")?;
+                toml::from_str(contents).context("Could not parse Cargo.lock or poetry.lock")?;
             cargo_lock.packages()
         }
         "package-lock.json" => {
