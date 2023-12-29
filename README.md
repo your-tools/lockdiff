@@ -22,18 +22,20 @@ The primary purpose of this tool is to hide "noise" related to package changes
 in automatically generated files such as `Cargo.lock` when using with `git diff`
 and related commands.
 
-For this to work, you need to register the 'lockdiff' in .gitattributes:
-
-```
-Cargo.lock diff=lockdiff
-```
-
-And have the following section in your git config:
+For this to work, you need to register the 'lockdiff' as a text conveter
+in your git config (usually `~/.config/git/config`)
 
 ```ini
 [diff "lockdiff"]
 textconv = lockdiff
 ```
+
+and then tell `git` to use `lockdiff` when diffing files, in `~/.config/git/attributes`:
+
+```
+Cargo.lock diff=lockdiff
+```
+
 
 # Supported locks
 
