@@ -5,13 +5,14 @@ use anyhow::{anyhow, bail, Context, Result};
 use serde::Deserialize;
 
 #[derive(PartialEq, Eq, Debug)]
+/// Represents basic information of a package in a lock file
+/// We keep only the name and the version
 struct Package {
     name: String,
     version: String,
 }
 
 impl Package {
-    #![allow(dead_code)]
     fn new(name: &str, version: &str) -> Self {
         Self {
             name: name.to_string(),
@@ -26,17 +27,13 @@ impl Display for Package {
     }
 }
 
-trait Lock {
-    fn packages(self) -> Vec<Package>;
-}
-
 #[derive(Deserialize, Debug)]
 struct CargoLock {
     #[serde(rename = "package")]
     packages: Vec<CargoPackage>,
 }
 
-impl Lock for CargoLock {
+impl CargoLock {
     fn packages(self) -> Vec<Package> {
         self.packages.into_iter().map(|p| p.into()).collect()
     }
@@ -49,11 +46,8 @@ struct CargoPackage {
 }
 
 impl From<CargoPackage> for Package {
-    fn from(val: CargoPackage) -> Self {
-        Package {
-            name: val.name,
-            version: val.version,
-        }
+    fn from(cargo_package: CargoPackage) -> Self {
+        Package::new(&cargo_package.name, &cargo_package.version)
     }
 }
 
@@ -62,15 +56,12 @@ struct NpmLock {
     packages: BTreeMap<String, NpmPackage>,
 }
 
-impl Lock for NpmLock {
+impl NpmLock {
     fn packages(self) -> Vec<Package> {
         self.packages
             .into_iter()
             .filter(|(k, _)| !k.is_empty())
-            .map(|(k, v)| Package {
-                name: k.replace("node_modules/", ""),
-                version: v.version,
-            })
+            .map(|(k, v)| Package::new(&k.replace("node_modules/", ""), &v.version))
             .collect()
     }
 }
