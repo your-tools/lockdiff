@@ -20,7 +20,7 @@ impl ComposerLock {
     fn packages(self) -> Vec<Package> {
         self.packages
             .into_iter()
-            .chain(self.packages_dev.into_iter())
+            .chain(self.packages_dev)
             .map(|p| Package::new(&p.name, &p.version))
             .collect()
     }
