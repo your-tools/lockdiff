@@ -3,9 +3,11 @@ use std::path::PathBuf;
 
 use anyhow::{anyhow, bail, Context, Result};
 
+mod go;
 mod node;
 mod php;
 mod rust;
+use go::parse_go_sum;
 use node::{parse_npm, parse_yarn};
 use php::parse_composer;
 use rust::parse_cargo;
@@ -37,6 +39,7 @@ fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
     match name {
         "Cargo.lock" | "poetry.lock" => parse_cargo(contents),
         "composer.lock" => parse_composer(contents),
+        "go.sum" => parse_go_sum(contents),
         "package-lock.json" => parse_npm(contents),
         "yarn.lock" => parse_yarn(contents),
         _ => bail!("Unknown lock name: {name}"),
