@@ -67,7 +67,7 @@ pub fn run() -> Result<()> {
 
     // Then, try and convert the lock, and if it fails, just print the contents followed
     // by an error message
-    if let Err(e) = print_lock(&file_name, &lock_path, &lock_contents) {
+    if let Err(e) = print_lock(file_name, &lock_path, &lock_contents) {
         println!("{lock_contents}");
         eprintln!("Note: {e:#}");
     }
@@ -78,7 +78,7 @@ fn print_lock(file_name: &OsStr, lock_path: &Path, contents: &str) -> Result<()>
     let file_name = file_name
         .to_str()
         .context("File name {file_name:?} should be UTF-8")?;
-    let packages = parse_lock(file_name, &contents)
+    let packages = parse_lock(file_name, contents)
         .context(format!("Could not parse {}", lock_path.display()))?;
     for package in packages {
         println!("{package}");
