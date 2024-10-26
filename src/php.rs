@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use serde::Deserialize;
 
 use crate::Package;
@@ -27,8 +27,7 @@ impl ComposerLock {
 }
 
 pub(crate) fn parse_composer(contents: &str) -> Result<Vec<Package>> {
-    let composer_lock: ComposerLock =
-        serde_json::from_str(contents).context("Could not parse composer.json")?;
+    let composer_lock: ComposerLock = serde_json::from_str(contents)?;
     Ok(composer_lock.packages())
 }
 

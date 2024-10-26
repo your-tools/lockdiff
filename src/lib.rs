@@ -1,7 +1,8 @@
 use std::fmt::Display;
 use std::path::PathBuf;
+use std::{ffi::OsStr, path::Path};
 
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{bail, Context, Result};
 
 mod go;
 mod node;
@@ -47,21 +48,38 @@ fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
 }
 
 pub fn run() -> Result<()> {
+    // Main entry point
+    //
+    // Note that if anything goes wrong, we would rather print the original contents
+    // of the lock file rather than just an error message
+    //
+    // So, first make sure we have *something* to print
     let args: Vec<_> = std::env::args().collect();
     if args.len() != 2 {
         bail!("Expected exactly one arg");
     }
-
     let lock_path = &args[1];
     let lock_path = PathBuf::from(lock_path);
-    let name = lock_path
+    let file_name = lock_path
         .file_name()
-        .ok_or_else(|| anyhow!("Lock path should have a file name"))?;
-    let name = name
-        .to_str()
-        .ok_or_else(|| anyhow!("File name should be valid UTF-8"))?;
+        .context("|| lock path should have a file name")?;
     let lock_contents = std::fs::read_to_string(&lock_path).context("Could not read lock file")?;
-    let packages = parse_lock(name, &lock_contents)?;
+
+    // Then, try and convert the lock, and if it fails, just print the contents followed
+    // by an error message
+    if let Err(e) = print_lock(&file_name, &lock_path, &lock_contents) {
+        println!("{lock_contents}");
+        eprintln!("Note: {e:#}");
+    }
+    Ok(())
+}
+
+fn print_lock(file_name: &OsStr, lock_path: &Path, contents: &str) -> Result<()> {
+    let file_name = file_name
+        .to_str()
+        .context("File name {file_name:?} should be UTF-8")?;
+    let packages = parse_lock(file_name, &contents)
+        .context(format!("Could not parse {}", lock_path.display()))?;
     for package in packages {
         println!("{package}");
     }

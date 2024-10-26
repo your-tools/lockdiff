@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 
 use crate::Package;
 
@@ -26,13 +26,12 @@ impl NpmLock {
 }
 
 pub(crate) fn parse_npm(contents: &str) -> Result<Vec<Package>> {
-    let npm_lock: NpmLock =
-        serde_json::from_str(contents).context("Could not parse package-lock.json")?;
+    let npm_lock: NpmLock = serde_json::from_str(contents)?;
     Ok(npm_lock.packages())
 }
 
 pub(crate) fn parse_yarn(contents: &str) -> Result<Vec<Package>> {
-    let entries = yarn_lock_parser::parse_str(contents).context("Could not parse yarn.lock")?;
+    let entries = yarn_lock_parser::parse_str(contents)?;
     Ok(entries
         .iter()
         .map(|e| Package::new(e.name, e.version))

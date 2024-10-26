@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use serde::Deserialize;
 
 use crate::Package;
@@ -28,8 +28,7 @@ impl From<CargoPackage> for Package {
 }
 
 pub(crate) fn parse_cargo(contents: &str) -> Result<Vec<Package>> {
-    let cargo_lock: CargoLock =
-        toml::from_str(contents).context("Could not parse Cargo.lock or poetry.lock")?;
+    let cargo_lock: CargoLock = toml::from_str(contents)?;
     Ok(cargo_lock.packages())
 }
 
