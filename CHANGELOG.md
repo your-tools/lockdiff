@@ -1,4 +1,4 @@
-## Unreleased
+## 2.0.0 - 2025-01-20
 
 Change output format to be `name (version)` instead of `name@version` (more readable)
 
