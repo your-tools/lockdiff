@@ -13,7 +13,7 @@ version = "1.4"
 becomes:
 
 ```
-foo@1.4
+foo (1.4)
 ```
 
 # Using lockdiff with git
