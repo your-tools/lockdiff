@@ -1,7 +1,6 @@
-use std::collections::BTreeMap;
-
 use crate::Package;
 use anyhow::{bail, Result};
+use std::collections::BTreeMap;
 
 pub(crate) fn parse_go_sum(contents: &str) -> Result<Vec<Package>> {
     // For some reason go.mod contains several versions for the same package,

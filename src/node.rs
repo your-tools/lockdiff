@@ -1,10 +1,8 @@
+use crate::Package;
+use anyhow::Result;
+use serde::Deserialize;
 use std::collections::BTreeMap;
 
-use anyhow::Result;
-
-use crate::Package;
-
-use serde::Deserialize;
 #[derive(Deserialize, Debug, PartialEq, Eq)]
 struct NpmPackage {
     version: String,

@@ -1,7 +1,6 @@
+use crate::Package;
 use anyhow::Result;
 use serde::Deserialize;
-
-use crate::Package;
 
 #[derive(Deserialize, Debug)]
 struct CargoLock {

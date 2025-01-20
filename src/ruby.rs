@@ -1,6 +1,5 @@
-use anyhow::{bail, Result};
-
 use crate::Package;
+use anyhow::{bail, Result};
 
 pub(crate) fn parse_gemfile_lock(contents: &str) -> Result<Vec<Package>> {
     // Inspired by:
