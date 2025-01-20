@@ -40,6 +40,7 @@ Cargo.lock diff=lockdiff
 # Supported locks
 
 * `Cargo.lock`
+* `Gemfile.lock`
 * `composer.lock`
 * `go.sum` (beta)
 * `poetry.lock` (fun fact, Poetry and Cargo have compatible formats 😎)

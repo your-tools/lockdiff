@@ -7,10 +7,12 @@ use anyhow::{bail, Context, Result};
 mod go;
 mod node;
 mod php;
+mod ruby;
 mod rust;
 use go::parse_go_sum;
 use node::{parse_npm, parse_yarn};
 use php::parse_composer;
+use ruby::parse_gemfile_lock;
 use rust::parse_cargo;
 
 #[derive(PartialEq, Eq, Debug)]
@@ -39,6 +41,7 @@ impl Display for Package {
 fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
     match name {
         "Cargo.lock" | "poetry.lock" => parse_cargo(contents),
+        "Gemfile.lock" => parse_gemfile_lock(contents),
         "composer.lock" => parse_composer(contents),
         "go.sum" => parse_go_sum(contents),
         "package-lock.json" => parse_npm(contents),
