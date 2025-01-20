@@ -45,4 +45,5 @@ Cargo.lock diff=lockdiff
 * `go.sum` (beta)
 * `poetry.lock` (fun fact, Poetry and Cargo have compatible formats 😎)
 * `package-lock.json`
+* `shard.lock`
 * `yarn.lock`

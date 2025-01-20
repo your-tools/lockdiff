@@ -4,12 +4,14 @@ use std::{ffi::OsStr, path::Path};
 
 use anyhow::{bail, Context, Result};
 
+mod crystal;
 mod dart;
 mod go;
 mod node;
 mod php;
 mod ruby;
 mod rust;
+use crystal::parse_shard_lock;
 use dart::parse_pubspec_lock;
 use go::parse_go_sum;
 use node::{parse_npm_lock, parse_yarn_lock};
@@ -48,6 +50,7 @@ fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
         "go.sum" => parse_go_sum(contents),
         "package-lock.json" => parse_npm_lock(contents),
         "pubspec.lock" => parse_pubspec_lock(contents),
+        "shard.lock" => parse_shard_lock(contents),
         "yarn.lock" => parse_yarn_lock(contents),
         _ => bail!("Unknown lock name: {name}"),
     }
