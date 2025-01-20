@@ -1,3 +1,13 @@
+## Unreleased
+
+Change output format to be `name (version)` instead of `name@version` (more readable)
+
+Add support for
+
+- `Gemfile.lock` (ruby)
+- `pubspec.lock` (dart)
+- `shard.lock` (crystal)
+
 ## 1.1.7 - 2024-10-26
 
 * Add support for `go.sum`
