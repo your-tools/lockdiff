@@ -10,7 +10,10 @@ struct CargoLock {
 
 impl CargoLock {
     fn packages(self) -> Vec<Package> {
-        self.packages.into_iter().map(|p| p.into()).collect()
+        self.packages
+            .into_iter()
+            .map(|p| Package::new(&p.name, &p.version))
+            .collect()
     }
 }
 
@@ -18,12 +21,6 @@ impl CargoLock {
 struct CargoPackage {
     name: String,
     version: String,
-}
-
-impl From<CargoPackage> for Package {
-    fn from(cargo_package: CargoPackage) -> Self {
-        Package::new(&cargo_package.name, &cargo_package.version)
-    }
 }
 
 pub(crate) fn parse_cargo_lock(contents: &str) -> Result<Vec<Package>> {
