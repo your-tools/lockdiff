@@ -25,12 +25,12 @@ impl NpmLock {
     }
 }
 
-pub(crate) fn parse_npm(contents: &str) -> Result<Vec<Package>> {
+pub(crate) fn parse_npm_lock(contents: &str) -> Result<Vec<Package>> {
     let npm_lock: NpmLock = serde_json::from_str(contents)?;
     Ok(npm_lock.packages())
 }
 
-pub(crate) fn parse_yarn(contents: &str) -> Result<Vec<Package>> {
+pub(crate) fn parse_yarn_lock(contents: &str) -> Result<Vec<Package>> {
     let entries = yarn_lock_parser::parse_str(contents)?;
     Ok(entries
         .iter()
@@ -67,7 +67,7 @@ mod tests {
 }
 "#;
 
-        let packages = parse_npm(contents).unwrap();
+        let packages = parse_npm_lock(contents).unwrap();
         assert_eq!(&packages, &[Package::new("@eslint/eslintrc", "2.1.2")]);
     }
 }

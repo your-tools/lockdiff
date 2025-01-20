@@ -10,10 +10,10 @@ mod php;
 mod ruby;
 mod rust;
 use go::parse_go_sum;
-use node::{parse_npm, parse_yarn};
-use php::parse_composer;
+use node::{parse_npm_lock, parse_yarn_lock};
+use php::parse_composer_lock;
 use ruby::parse_gemfile_lock;
-use rust::parse_cargo;
+use rust::parse_cargo_lock;
 
 #[derive(PartialEq, Eq, Debug)]
 /// Represents basic information of a package in a lock file
@@ -40,12 +40,12 @@ impl Display for Package {
 
 fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
     match name {
-        "Cargo.lock" | "poetry.lock" => parse_cargo(contents),
+        "Cargo.lock" | "poetry.lock" => parse_cargo_lock(contents),
         "Gemfile.lock" => parse_gemfile_lock(contents),
-        "composer.lock" => parse_composer(contents),
+        "composer.lock" => parse_composer_lock(contents),
         "go.sum" => parse_go_sum(contents),
-        "package-lock.json" => parse_npm(contents),
-        "yarn.lock" => parse_yarn(contents),
+        "package-lock.json" => parse_npm_lock(contents),
+        "yarn.lock" => parse_yarn_lock(contents),
         _ => bail!("Unknown lock name: {name}"),
     }
 }

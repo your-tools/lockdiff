@@ -26,7 +26,7 @@ impl ComposerLock {
     }
 }
 
-pub(crate) fn parse_composer(contents: &str) -> Result<Vec<Package>> {
+pub(crate) fn parse_composer_lock(contents: &str) -> Result<Vec<Package>> {
     let composer_lock: ComposerLock = serde_json::from_str(contents)?;
     Ok(composer_lock.packages())
 }
@@ -60,7 +60,7 @@ mod tests {
    ]
 }
 "#;
-        let packages = parse_composer(contents).unwrap();
+        let packages = parse_composer_lock(contents).unwrap();
         assert_eq!(
             &packages,
             &[

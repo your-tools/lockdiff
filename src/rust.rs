@@ -27,7 +27,7 @@ impl From<CargoPackage> for Package {
     }
 }
 
-pub(crate) fn parse_cargo(contents: &str) -> Result<Vec<Package>> {
+pub(crate) fn parse_cargo_lock(contents: &str) -> Result<Vec<Package>> {
     let cargo_lock: CargoLock = toml::from_str(contents)?;
     Ok(cargo_lock.packages())
 }
@@ -54,7 +54,7 @@ version = "1.0.0"
 dependencies = [
  "anyhow",
 ]"#;
-        let packages = parse_cargo(contents).unwrap();
+        let packages = parse_cargo_lock(contents).unwrap();
         assert_eq!(
             &packages,
             &[
