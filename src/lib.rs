@@ -17,7 +17,7 @@ use dart::parse_pubspec_lock;
 use go::parse_go_sum;
 use node::{parse_npm_lock, parse_yarn_lock};
 use php::parse_composer_lock;
-use python::parse_poetry_lock;
+use python::{parse_poetry_lock, parse_requirements_txt};
 use ruby::parse_gemfile_lock;
 use rust::parse_cargo_lock;
 
@@ -45,6 +45,10 @@ impl Display for Package {
 }
 
 fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
+    fn is_python_requirements(name: &str) -> bool {
+        name.contains("requirements") && name.ends_with(".txt")
+    }
+
     match name {
         "Cargo.lock" => parse_cargo_lock(contents),
         "Gemfile.lock" => parse_gemfile_lock(contents),
@@ -55,6 +59,7 @@ fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
         "pubspec.lock" => parse_pubspec_lock(contents),
         "shard.lock" => parse_shard_lock(contents),
         "yarn.lock" => parse_yarn_lock(contents),
+        name if is_python_requirements(name) => parse_requirements_txt(contents),
         _ => bail!("Unknown lock name: {name}"),
     }
 }
