@@ -9,6 +9,7 @@ mod dart;
 mod go;
 mod node;
 mod php;
+mod python;
 mod ruby;
 mod rust;
 use crystal::parse_shard_lock;
@@ -16,6 +17,7 @@ use dart::parse_pubspec_lock;
 use go::parse_go_sum;
 use node::{parse_npm_lock, parse_yarn_lock};
 use php::parse_composer_lock;
+use python::parse_poetry_lock;
 use ruby::parse_gemfile_lock;
 use rust::parse_cargo_lock;
 
@@ -44,11 +46,12 @@ impl Display for Package {
 
 fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
     match name {
-        "Cargo.lock" | "poetry.lock" => parse_cargo_lock(contents),
+        "Cargo.lock" => parse_cargo_lock(contents),
         "Gemfile.lock" => parse_gemfile_lock(contents),
         "composer.lock" => parse_composer_lock(contents),
         "go.sum" => parse_go_sum(contents),
         "package-lock.json" => parse_npm_lock(contents),
+        "poetry.lock" => parse_poetry_lock(contents),
         "pubspec.lock" => parse_pubspec_lock(contents),
         "shard.lock" => parse_shard_lock(contents),
         "yarn.lock" => parse_yarn_lock(contents),
