@@ -45,7 +45,7 @@ shards:
     git: https://github.com/will/crystal-pg.git
     version: 0.29.0
 "#;
-        let packages = parse_shard_lock(&contents).unwrap();
+        let packages = parse_shard_lock(contents).unwrap();
         assert_eq!(
             &packages,
             &[Package::new("db", "0.13.1"), Package::new("pg", "0.29.0")]
