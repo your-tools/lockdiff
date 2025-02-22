@@ -1,31 +1,6 @@
-use crate::Package;
-use anyhow::Result;
-use serde::Deserialize;
-
-#[derive(Deserialize, Debug)]
-struct CargoLock {
-    #[serde(rename = "package")]
-    packages: Vec<Package>,
-}
-
-impl CargoLock {
-    fn packages(self) -> Vec<Package> {
-        self.packages
-            .into_iter()
-            .map(|p| Package::new(&p.name, &p.version))
-            .collect()
-    }
-}
-
-pub(crate) fn parse_cargo_lock(contents: &str) -> Result<Vec<Package>> {
-    let cargo_lock: CargoLock = toml::from_str(contents)?;
-    Ok(cargo_lock.packages())
-}
-
 #[cfg(test)]
 mod tests {
-
-    use super::*;
+    use crate::{parse_toml_lock, Package};
 
     #[test]
     fn test_parse_cargo_lock() {
@@ -44,7 +19,7 @@ version = "1.0.0"
 dependencies = [
  "anyhow",
 ]"#;
-        let packages = parse_cargo_lock(contents).unwrap();
+        let packages = parse_toml_lock(contents).unwrap();
         assert_eq!(
             &packages,
             &[
