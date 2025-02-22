@@ -5,7 +5,7 @@ use serde::Deserialize;
 #[derive(Deserialize, Debug)]
 struct PoetryLock {
     #[serde(rename = "package")]
-    packages: Vec<PythonPackage>,
+    packages: Vec<Package>,
 }
 
 impl PoetryLock {
@@ -15,12 +15,6 @@ impl PoetryLock {
             .map(|p| Package::new(&p.name, &p.version))
             .collect()
     }
-}
-
-#[derive(Deserialize, Debug)]
-struct PythonPackage {
-    name: String,
-    version: String,
 }
 
 pub(crate) fn parse_poetry_lock(contents: &str) -> Result<Vec<Package>> {

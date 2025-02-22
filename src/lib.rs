@@ -20,10 +20,12 @@ use php::parse_composer_lock;
 use python::{parse_poetry_lock, parse_requirements_txt};
 use ruby::parse_gemfile_lock;
 use rust::parse_cargo_lock;
+use serde::Deserialize;
 
-#[derive(PartialEq, Eq, Debug)]
-/// Represents basic information of a package in a lock file
-/// We keep only the name and the version
+#[derive(PartialEq, Eq, Debug, Deserialize)]
+// This is the struct we want to use for the final display
+// of the lock contents.
+// It only contains the name and version of the package.
 struct Package {
     name: String,
     version: String,
@@ -36,6 +38,14 @@ impl Package {
             version: version.to_string(),
         }
     }
+}
+
+#[derive(PartialEq, Eq, Debug, Deserialize)]
+// Sometimes we need a struct to represent package metadata while parsing
+// locks because we already got the name. In this case the struct
+// only contains the package version.
+struct PackageMetadata {
+    version: String,
 }
 
 impl Display for Package {

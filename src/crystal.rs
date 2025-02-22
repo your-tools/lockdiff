@@ -1,11 +1,11 @@
-use crate::Package;
+use crate::{Package, PackageMetadata};
 use anyhow::Result;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
 #[derive(Deserialize, Debug)]
 struct ShardLock {
-    shards: BTreeMap<String, ShardPackage>,
+    shards: BTreeMap<String, PackageMetadata>,
 }
 
 impl ShardLock {
@@ -15,11 +15,6 @@ impl ShardLock {
             .map(|(key, value)| Package::new(&key, &value.version))
             .collect()
     }
-}
-
-#[derive(Deserialize, Debug)]
-struct ShardPackage {
-    version: String,
 }
 
 pub(crate) fn parse_shard_lock(contents: &str) -> Result<Vec<Package>> {

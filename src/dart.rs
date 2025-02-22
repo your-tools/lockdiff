@@ -1,12 +1,12 @@
 use std::collections::BTreeMap;
 
-use crate::Package;
+use crate::{Package, PackageMetadata};
 use anyhow::Result;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 struct PubSpecLock {
-    packages: BTreeMap<String, PubPackage>,
+    packages: BTreeMap<String, PackageMetadata>,
 }
 
 impl PubSpecLock {
@@ -16,12 +16,6 @@ impl PubSpecLock {
             .map(|(key, value)| Package::new(&key, &value.version))
             .collect()
     }
-}
-
-#[derive(Deserialize, Debug)]
-struct PubPackage {
-    // Note: no `name` here, because the package names are the keys in the BTreeMap
-    version: String,
 }
 
 pub(crate) fn parse_pubspec_lock(contents: &str) -> Result<Vec<Package>> {

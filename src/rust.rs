@@ -5,7 +5,7 @@ use serde::Deserialize;
 #[derive(Deserialize, Debug)]
 struct CargoLock {
     #[serde(rename = "package")]
-    packages: Vec<CargoPackage>,
+    packages: Vec<Package>,
 }
 
 impl CargoLock {
@@ -15,12 +15,6 @@ impl CargoLock {
             .map(|p| Package::new(&p.name, &p.version))
             .collect()
     }
-}
-
-#[derive(Deserialize, Debug)]
-struct CargoPackage {
-    name: String,
-    version: String,
 }
 
 pub(crate) fn parse_cargo_lock(contents: &str) -> Result<Vec<Package>> {

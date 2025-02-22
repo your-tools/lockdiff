@@ -1,16 +1,11 @@
-use crate::Package;
+use crate::{Package, PackageMetadata};
 use anyhow::Result;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
 #[derive(Deserialize, Debug, PartialEq, Eq)]
-struct NpmPackage {
-    version: String,
-}
-
-#[derive(Deserialize, Debug, PartialEq, Eq)]
 struct NpmLock {
-    packages: BTreeMap<String, NpmPackage>,
+    packages: BTreeMap<String, PackageMetadata>,
 }
 
 impl NpmLock {

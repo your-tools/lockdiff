@@ -3,25 +3,15 @@ use anyhow::Result;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug, PartialEq, Eq)]
-struct ComposerPackage {
-    name: String,
-    version: String,
-}
-
-#[derive(Deserialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "kebab-case")]
 struct ComposerLock {
-    packages: Vec<ComposerPackage>,
-    packages_dev: Vec<ComposerPackage>,
+    packages: Vec<Package>,
+    packages_dev: Vec<Package>,
 }
 
 impl ComposerLock {
     fn packages(self) -> Vec<Package> {
-        self.packages
-            .into_iter()
-            .chain(self.packages_dev)
-            .map(|p| Package::new(&p.name, &p.version))
-            .collect()
+        self.packages.into_iter().chain(self.packages_dev).collect()
     }
 }
 
