@@ -2,7 +2,7 @@
 name = "lockdiff"
 version = "2.0.1"
 description = "Display more readable diffs for lock files"
-edition = "2021"
+edition = "2024"
 license = "BSD-3-Clause"
 readme = "README.md"
 repository = "https://github.com/your-tools/lockdiff"
