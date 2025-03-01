@@ -24,10 +24,11 @@ pub(crate) fn parse_npm_lock(contents: &str) -> Result<Vec<Package>> {
 }
 
 pub(crate) fn parse_yarn_lock(contents: &str) -> Result<Vec<Package>> {
-    let entries = yarn_lock_parser::parse_str(contents)?;
-    Ok(entries
+    let lock = yarn_lock_parser::parse_str(contents)?;
+    Ok(lock
+        .entries
         .iter()
-        .map(|e| Package::new(e.name, e.version))
+        .map(|entry| Package::new(entry.name, entry.version))
         .collect())
 }
 
