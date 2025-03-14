@@ -2,12 +2,12 @@ use std::fmt::Display;
 use std::path::PathBuf;
 use std::{ffi::OsStr, path::Path};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 
 mod crystal;
 mod dart;
 mod go;
-mod node;
+mod javascript;
 mod php;
 mod python;
 mod ruby;
@@ -15,7 +15,7 @@ mod rust;
 use crystal::parse_shard_lock;
 use dart::parse_pubspec_lock;
 use go::parse_go_sum;
-use node::{parse_npm_lock, parse_yarn_lock};
+use javascript::{parse_npm_lock, parse_yarn_lock};
 use php::parse_composer_lock;
 use python::parse_requirements_txt;
 use ruby::parse_gemfile_lock;
