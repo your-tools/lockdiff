@@ -67,7 +67,13 @@ mod tests {
 "#;
 
         let packages = parse_npm_lock(contents).unwrap();
-        assert_eq!(&packages, &[Package::new("@eslint/eslintrc", "2.1.2")]);
+        assert_eq!(
+            &packages,
+            &[
+                Package::new("my-proj", "0.0.0"),
+                Package::new("@eslint/eslintrc", "2.1.2")
+            ]
+        );
     }
 
     #[test]
