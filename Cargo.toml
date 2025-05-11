@@ -1,6 +1,6 @@
 [package]
 name = "lockdiff"
-version = "2.0.1"
+version = "2.0.2"
 description = "Display more readable diffs for lock files"
 edition = "2024"
 license = "BSD-3-Clause"
