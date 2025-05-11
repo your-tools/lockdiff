@@ -1,3 +1,7 @@
+## 2.0.2 - 2025-05-11
+
+* Also display root package when parsing `npm` lock files.
+
 ## 2.0.1 - 2025-01-20
 
 Change output format to be `name (version)` instead of `name@version` (more readable)
