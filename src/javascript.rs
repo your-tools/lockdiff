@@ -6,15 +6,20 @@ use std::collections::BTreeMap;
 #[derive(Deserialize, Debug, PartialEq, Eq)]
 struct NpmLock {
     packages: BTreeMap<String, PackageMetadata>,
+    name: String,
+    version: String,
 }
 
 impl NpmLock {
     pub(crate) fn packages(self) -> Vec<Package> {
-        self.packages
+        let mut packages: Vec<_> = self
+            .packages
             .into_iter()
             .filter(|(k, _)| !k.is_empty())
             .map(|(k, v)| Package::new(&k.replace("node_modules/", ""), &v.version))
-            .collect()
+            .collect();
+        packages.insert(0, Package::new(&self.name, &self.version));
+        packages
     }
 }
 
