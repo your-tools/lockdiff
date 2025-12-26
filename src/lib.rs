@@ -25,7 +25,7 @@ use serde::Deserialize;
 // This is the struct we want to use for the final display
 // of the lock contents.
 // It only contains the name and version of the package.
-struct Package {
+pub struct Package {
     name: String,
     version: String,
 }
@@ -36,6 +36,14 @@ impl Package {
             name: name.to_string(),
             version: version.to_string(),
         }
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn version(&self) -> &str {
+        &self.version
     }
 }
 
@@ -71,7 +79,7 @@ fn parse_toml_lock(contents: &str) -> Result<Vec<Package>> {
     Ok(lock.packages())
 }
 
-fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
+pub fn parse_lock(name: &str, contents: &str) -> Result<Vec<Package>> {
     fn is_python_requirements(name: &str) -> bool {
         name.contains("requirements") && name.ends_with(".txt")
     }
