@@ -1,6 +1,10 @@
+## 2.0.3 - 2025-12-26
+
+Make a few items public so that this project can also be used as a library
+
 ## 2.0.2 - 2025-05-11
 
-* Also display root package when parsing `npm` lock files.
+- Also display root package when parsing `npm` lock files.
 
 ## 2.0.1 - 2025-01-20
 
@@ -14,8 +18,8 @@ Add support for
 
 ## 1.1.7 - 2024-10-26
 
-* Add support for `go.sum`
-* Show contents of the lock when parsing fails instead of just the error message
+- Add support for `go.sum`
+- Show contents of the lock when parsing fails instead of just the error message
 
 ## 1.1.6 - 2023-02-23
 
