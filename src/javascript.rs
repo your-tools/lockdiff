@@ -1,25 +1,37 @@
-use crate::{Package, PackageMetadata};
+use crate::Package;
 use anyhow::Result;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
 #[derive(Deserialize, Debug, PartialEq, Eq)]
+struct NpmPackage {
+    version: Option<String>,
+}
+
+impl NpmPackage {
+    fn try_package(self, name: String) -> Option<Package> {
+        let name = name.replace("node_modules/", "");
+        self.version.map(|v| Package {name, version: v})
+    }
+}
+
+#[derive(Deserialize, Debug, PartialEq, Eq)]
 struct NpmLock {
-    packages: BTreeMap<String, PackageMetadata>,
+    packages: BTreeMap<String, NpmPackage>,
     name: String,
     version: String,
 }
 
 impl NpmLock {
     pub(crate) fn packages(self) -> Vec<Package> {
-        let mut packages: Vec<_> = self
+        let mut dependencies : Vec<_>= self
             .packages
             .into_iter()
-            .filter(|(k, _)| !k.is_empty())
-            .map(|(k, v)| Package::new(&k.replace("node_modules/", ""), &v.version))
+            .filter(|(name, _)| !name.is_empty())
+            .filter_map(|(name, npm_package)| {npm_package.try_package(name)})
             .collect();
-        packages.insert(0, Package::new(&self.name, &self.version));
-        packages
+        dependencies.insert(0, Package { name: self.name, version: self.version});
+        dependencies
     }
 }
 
@@ -60,7 +72,11 @@ mod tests {
     },
     "node_modules/@eslint/eslintrc": {
       "version": "2.1.2",
-       "resolved": "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-2.1.2.tgz"
+      "resolved": "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-2.1.2.tgz"
+    },
+    "node_module/local-package": {
+      "resolved": "some/local-package",
+      "link": true
     }
   }
 }
