@@ -1,3 +1,7 @@
+## 2.0.5 - 2025-12-31
+
+Add Powershell installer
+
 ## 2.0.4 - 2025-12-31
 
 Fix #3: `lockdiff` can now parse `package-lock.json` when it contains
