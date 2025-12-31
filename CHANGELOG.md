@@ -1,3 +1,8 @@
+## 2.0.4 - 2025-12-31
+
+Fix #3: `lockdiff` can now parse `package-lock.json` when it contains
+linked packages. (Reported by @joshbode)
+
 ## 2.0.3 - 2025-12-26
 
 Make a few items public so that this project can also be used as a library
