@@ -11,7 +11,7 @@ struct NpmPackage {
 impl NpmPackage {
     fn try_package(self, name: String) -> Option<Package> {
         let name = name.replace("node_modules/", "");
-        self.version.map(|v| Package {name, version: v})
+        self.version.map(|v| Package { name, version: v })
     }
 }
 
@@ -24,13 +24,19 @@ struct NpmLock {
 
 impl NpmLock {
     pub(crate) fn packages(self) -> Vec<Package> {
-        let mut dependencies : Vec<_>= self
+        let mut dependencies: Vec<_> = self
             .packages
             .into_iter()
             .filter(|(name, _)| !name.is_empty())
-            .filter_map(|(name, npm_package)| {npm_package.try_package(name)})
+            .filter_map(|(name, npm_package)| npm_package.try_package(name))
             .collect();
-        dependencies.insert(0, Package { name: self.name, version: self.version});
+        dependencies.insert(
+            0,
+            Package {
+                name: self.name,
+                version: self.version,
+            },
+        );
         dependencies
     }
 }
@@ -58,13 +64,13 @@ mod tests {
     fn test_npm_lock() {
         let contents = r#"
 {
-  "name": "my-proj",
+  "name": "my-project",
   "version": "0.0.0",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
-      "name": "my-proj",
+      "name": "my-project",
       "version": "0.0.0",
       "dependencies": {
         "@eslint": "^2.1.2"
@@ -86,7 +92,7 @@ mod tests {
         assert_eq!(
             &packages,
             &[
-                Package::new("my-proj", "0.0.0"),
+                Package::new("my-project", "0.0.0"),
                 Package::new("@eslint/eslintrc", "2.1.2")
             ]
         );
@@ -102,12 +108,12 @@ mod tests {
 leftpad@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/leftpad/-/leftpad-0.0.1.tgz#86b1a4de4face180ac545a83f1503523d8fed115"
-  integrity sha512-kBAuxBQJlJ85LDc+SnGSX6gWJnJR9Qk4lbgXmz/qPfCOCieCk7BgoN3YvzoNr5BUjqxQDOQxawJJvXXd6c+6Mg==
+  integrity sha512-sha1
 
 typescript@^4.9.5:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
-  integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
+  integrity sha512-sha2
         "#;
         let contents = contents.trim();
         let packages = parse_yarn_lock(contents).unwrap();

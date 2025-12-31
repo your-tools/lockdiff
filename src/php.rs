@@ -42,7 +42,7 @@ mod tests {
    ],
    "packages-dev" : [
       {
-         "name" : "myclabs/deep-copy",
+         "name" : "some-group/deep-copy",
          "source" : {},
          "version" : "1.11.0"
       }
@@ -54,7 +54,7 @@ mod tests {
             &packages,
             &[
                 Package::new("acme.corp/stuff", "1.2.3"),
-                Package::new("myclabs/deep-copy", "1.11.0")
+                Package::new("some-group/deep-copy", "1.11.0")
             ]
         );
     }

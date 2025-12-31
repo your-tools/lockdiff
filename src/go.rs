@@ -1,5 +1,5 @@
 use crate::Package;
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use std::collections::BTreeMap;
 
 pub(crate) fn parse_go_sum(contents: &str) -> Result<Vec<Package>> {
@@ -33,9 +33,9 @@ mod tests {
     #[test]
     fn test_go_sum() {
         let contents = r#"
-cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-cloud.google.com/go/storage v1.14.0/go.mod h1:GrKmX003DSIwi9o29oFT7YDnHYwZoctc3fOKtUw0Xmo=
+cloud.google.com/go v0.26.0/go.mod h1:hash1
+cloud.google.com/go v0.34.0/go.mod h1:hash1
+cloud.google.com/go/storage v1.14.0/go.mod h1:hash2
 "#;
         let packages = parse_go_sum(contents).unwrap();
         assert_eq!(
