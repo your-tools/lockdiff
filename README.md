@@ -1,5 +1,8 @@
 # Lockdiff
 
+
+**This repository has moved to [codeberg](https://codeberg.org/your-tools/) - see you there !**
+
 Convert a lock with lots of info to something more readable
 
 For instance:
